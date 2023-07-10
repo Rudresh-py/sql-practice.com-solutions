@@ -247,11 +247,9 @@ ORDER BY first_name DESC;
 
 14. Show the province_id(s), sum of height; where the total sum of its patients height is greater than or equal to 7,000.
 
-SELECT pr.province_id, SUM(pa.height) AS sum_height
-FROM province_names pr
-         JOIN patients pa ON pr.province_id = pa.province_id
-GROUP BY pr.province_id
-HAVING SUM(pa.height) >= 7000;
+select province_id, sum(height) as sum_hieght from patients
+group by province_id
+having sum(height)>=7000;
 
 
 15. Show the difference between the largest weight and smallest weight for patients with the last name 'Maroni'
@@ -323,10 +321,10 @@ ORDER BY patient_count DESC;
 
 22. For every admission, display the patients full name, their admission diagnosis, and their doctors full name who diagnosed their problem.
 
-SELECT CONCAT(p.first_name, ' ', p.last_name) AS patient_name, a.diagnosis, CONCAT(d.first_name, ' ', d.last_name) AS doctor_name
-FROM patients p
-         JOIN admissions a ON p.patient_id = a.patient_id
-         JOIN doctors d ON a.attending_doctor_id = d.doctor_id;
+select concat(patients.first_name, ' ', patients.last_name),
+admissions.diagnosis, concat(doctors.first_name, ' ', doctors.last_name) from patients
+join admissions on patients.patient_id=admissions.patient_id
+join doctors on admissions.attending_doctor_id=doctors.doctor_id
 
 23. Display the number of duplicate patients based on their first_name and last_name.
 
@@ -334,6 +332,20 @@ SELECT first_name, last_name, COUNT(*) AS number_of_duplicates
 FROM patients
 GROUP BY first_name, last_name
 HAVING COUNT(*) > 1;
+
+24. Display patients full name, height in the unit feet rounded to 1 decimal, weight in the unit pounds rounded to 0
+decimals, birth_date, gender non abbreviated.
+Convert CM to feet by dividing by 30.48.
+Convert KG to pounds by multiplying by 2.205.
+
+SELECT concat(first_name, ' ', last_name) as full_name,
+round(height/30.48, 1) as height, round(weight*2.205) as weight,
+birth_date,
+case gender when 'M' then 'MALE'
+when 'F' Then 'FEMALE'
+ELSE 'OTHERS'
+End as gender
+FROM patients
 
 
 Section3: Hard
@@ -372,12 +384,10 @@ FROM patients;
    Check patients, admissions, and doctors tables for required information.
 
 
-SELECT p.patient_id, p.first_name, p.last_name, d.speciality
-FROM patients p
-         JOIN admissions a ON p.patient_id = a.patient_id
-         JOIN doctors d ON a.attending_doctor_id = d.doctor_id
-WHERE a.diagnosis = 'Epilepsy'
-  AND d.first_name = 'Lisa';
+SELECT p.patient_id, p.first_name, p.last_name, d.speciality FROM patients p
+JOIN admissions a ON p.patient_id = a.patient_id
+JOIN doctors d ON a.attending_doctor_id = d.doctor_id
+WHERE a.diagnosis = 'Epilepsy' AND d.first_name = 'Lisa';
 
 
 4. All patients who have gone through admissions, can see their medical documents on our site. Those patients are given a temporary password after
